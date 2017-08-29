@@ -389,10 +389,18 @@ find.mpe<-function(model,start,given=list(),prior=list(),control,fit.vars=NULL,o
   G<-model[["G"]]
   d<-model[["d"]]
   
+  
+  if (is.null(control[["optim.method"]]))
+  {
+      optim.method = "L-BFGS-B"
+  } else {
+      optim.method = control[["optim.method"]]
+    }
+  
   #' @importFrom stats optim
   vmpe <- ##try(
               optim(par=start.vals,fn=optim.fs[["f"]],gr=optim.fs[["grad.f"]],
-                    method="L-BFGS-B",
+                    method=optim.method,
                     lower=pack.optim(list(
                       beta=rep(-Inf,p),
                       Z=rep(-Inf,n*d),

@@ -102,7 +102,8 @@ control.ergmm<-function(sample.size=4000,
                         backoff.factor=0.2,
                         accept.all=FALSE,
                         store.burnin=FALSE,
-                        refine.user.start=TRUE){
+                        refine.user.start=TRUE,
+                        optim.method=NULL){
   control<-list()
   for(arg in names(formals(sys.function())))
     control[[arg]]<-get(arg)

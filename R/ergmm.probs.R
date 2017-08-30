@@ -397,23 +397,31 @@ find.mpe<-function(model,start,given=list(),prior=list(),control,fit.vars=NULL,o
       optim.method = control[["optim.method"]]
     }
   
+  if (optim.method == "L-BFGS-B" | optim.method == "Brent") {
+      
+      lower=pack.optim(list(
+      beta=rep(-Inf,p),
+      Z=rep(-Inf,n*d),
+      sender=rep(-Inf,n),
+      receiver=rep(-Inf,n),
+      sociality=rep(-Inf,n),
+      Z.var=rep(sqrt(.Machine[["double.eps"]]),(d>0)*max(G,1)),
+      Z.mean=rep(-Inf,d*G),
+      sender.var=sqrt(.Machine[["double.eps"]]),
+      receiver.var=sqrt(.Machine[["double.eps"]]),
+      sociality.var=sqrt(.Machine[["double.eps"]]),
+      dispersion=sqrt(.Machine[["double.eps"]])),
+      fit.vars=fit.vars)
+      
+  } else {
+      lower = -Inf
+  }
+  
   #' @importFrom stats optim
   vmpe <- ##try(
               optim(par=start.vals,fn=optim.fs[["f"]],gr=optim.fs[["grad.f"]],
                     method=optim.method,
-                    lower=pack.optim(list(
-                      beta=rep(-Inf,p),
-                      Z=rep(-Inf,n*d),
-                      sender=rep(-Inf,n),
-                      receiver=rep(-Inf,n),
-                      sociality=rep(-Inf,n),
-                      Z.var=rep(sqrt(.Machine[["double.eps"]]),(d>0)*max(G,1)),
-                      Z.mean=rep(-Inf,d*G),
-                      sender.var=sqrt(.Machine[["double.eps"]]),
-                      receiver.var=sqrt(.Machine[["double.eps"]]),
-                      sociality.var=sqrt(.Machine[["double.eps"]]),
-                      dispersion=sqrt(.Machine[["double.eps"]])),
-                      fit.vars=fit.vars),
+                    lower=lower,
                     control=optim.control,hessian=hessian)
             ##  )
 
